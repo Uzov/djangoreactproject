@@ -1,13 +1,14 @@
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework import status
-
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import Customer
 from .serializers import *
 
 
 @api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated],)
 def customers_list(request):
     """
     List  customers, or create a new customer.
@@ -46,6 +47,7 @@ def customers_list(request):
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
+@permission_classes([IsAuthenticated],)
 def customers_detail(request, pk):
     """
     Retrieve, update or delete a customer by id/pk.
