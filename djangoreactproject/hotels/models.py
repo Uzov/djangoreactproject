@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.postgres.fields import JSONField
+from django.conf import settings
+User = settings.AUTH_USER_MODEL
 
 
 class HotelOffers(models.Model):
@@ -21,3 +23,14 @@ class HotelOffers(models.Model):
 
     def __str__(self):
         return f'{self.offer_id} ({self.date_begin} - {self.date_end})'
+
+
+class HotelBooking(models.Model):
+    offer_id = models.ForeignKey(HotelOffers, on_delete=models.CASCADE)
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    persons = JSONField(verbose_name='список_доп_проживающих', blank=True)
+    booking_id = models.CharField(verbose_name="код_бронирования", max_length=10, blank=True)
+    is_cancelled = models.BooleanField(verbose_name='отмено_бронирование?', default=False, blank=False)
+
+    def __str__(self):
+        return f'{self.offer_id} ({self.user_id} - {self.booking_id})'

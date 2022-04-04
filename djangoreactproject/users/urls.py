@@ -4,5 +4,5 @@ from .views import CreateUserAPIView, authenticate_user, UserRetrieveUpdateAPIVi
 urlpatterns = [
     url(r'^create/?$', CreateUserAPIView.as_view()),
     url(r'^update/?$', UserRetrieveUpdateAPIView.as_view()),
-    url(r'^obtain_token/?', authenticate_user),
+    url(r'^login/?', authenticate_user),
 ]
