@@ -5,7 +5,7 @@ User = settings.AUTH_USER_MODEL
 
 
 class HotelOffers(models.Model):
-    offer_id = models.CharField(verbose_name='ID_предложения', max_length=25, blank=False)
+    offer_id = models.CharField(verbose_name='ID_предложения', max_length=25, unique=True, blank=False)
     hotel_id = models.IntegerField(verbose_name='ID_отеля', blank=False)
     price = models.IntegerField(verbose_name='стоимость', blank=False)
     currency = models.CharField(verbose_name='валюта', max_length=3, blank=False)
@@ -16,10 +16,12 @@ class HotelOffers(models.Model):
     tariff_name = models.CharField(verbose_name='тип_тарифа', max_length=255, blank=False)
     date_begin = models.DateField(verbose_name='дата_заезда', blank=False)
     date_end = models.DateField(verbose_name='дата_выезда', blank=False)
+    check_in = models.TimeField(verbose_name='время_заезда', blank=True, null=True)
+    check_out = models.TimeField(verbose_name='время_выезда', blank=True, null=True)
     nights = models.IntegerField(verbose_name='число_ночей', blank=False)
     quote = models.IntegerField(verbose_name='квота', blank=False)
-    comission = models.IntegerField(verbose_name='комиссия', blank=False)
-    cancellation = JSONField(verbose_name='штраф_за_отмену_бронирования', null=True)
+    commission = models.IntegerField(verbose_name='комиссия', blank=False)
+    cancellation_info = JSONField(verbose_name='штраф_за_отмену_бронирования', null=True)
 
     def __str__(self):
         return f'{self.offer_id} ({self.date_begin} - {self.date_end})'
