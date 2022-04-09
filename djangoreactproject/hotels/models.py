@@ -21,7 +21,7 @@ class HotelOffers(models.Model):
     nights = models.IntegerField(verbose_name='число_ночей', blank=False)
     quote = models.IntegerField(verbose_name='квота', blank=False)
     commission = models.IntegerField(verbose_name='комиссия', blank=False)
-    cancellation_info = JSONField(verbose_name='штраф_за_отмену_бронирования', null=True)
+    cancellation_info = JSONField(verbose_name='штраф_за_отмену_бронирования', blank=True, null=True)
 
     def __str__(self):
         return f'{self.offer_id} ({self.date_begin} - {self.date_end})'
@@ -30,7 +30,8 @@ class HotelOffers(models.Model):
 class HotelBooking(models.Model):
     offer_id = models.ForeignKey(HotelOffers, on_delete=models.CASCADE)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-    persons = JSONField(verbose_name='список_доп_проживающих', blank=True)
+    email = models.EmailField(verbose_name='email', default='default@email', max_length=40, blank=False)
+    persons = JSONField(verbose_name='список_доп_проживающих', blank=True, null=True)
     booking_id = models.CharField(verbose_name="код_бронирования", max_length=10, blank=True)
     is_cancelled = models.BooleanField(verbose_name='отмено_бронирование?', default=False, blank=False)
 
