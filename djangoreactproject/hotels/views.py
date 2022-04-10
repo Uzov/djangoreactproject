@@ -9,6 +9,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.generics import RetrieveUpdateAPIView
 
 
+
 class CreateHotelsAPIView(APIView):
     # Allow any user (authenticated or not) to access this url
     # permission_classes = (AllowAny,)
@@ -23,7 +24,7 @@ class CreateHotelsAPIView(APIView):
                 "method": "Hotel.Offer"
             },
             "request": {
-                "id": request.data['offer_id']
+                "id": request.data['m_offer_id']
             }
         }
 
@@ -35,24 +36,20 @@ class CreateHotelsAPIView(APIView):
 
         offer = req.json()
         is_success = offer['is_success']
-        # print(request.user.email)
-        # print(request.user.id)
+
         if is_success:
             response = offer['response']
             # Замена ключа в словаре
-            response['offer_id'] = response.pop('id')
-            booking_data = {
-                'offer_id': request.data['offer_id'],
-                'user_id': request.user.id,
-                'email': request.user.email
-            }
-            offer_serializer = OffersSerializer(data=response)
-            booking_serializer = BookingSerializer(data=booking_data)
-            if offer_serializer.is_valid(raise_exception=True) and booking_serializer.is_valid(raise_exception=True):
-                offer_serializer.save()
-                booking_serializer.save()
-                return Response(offer_serializer.data, status=status.HTTP_201_CREATED)
-            return Response(offer_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            response['m_offer_id'] = response.pop('id')
+            response['user_id'] = request.user.id
+            response['email'] = request.user.email
+            response['persons'] = {}
+
+            serializer = OffersSerializer(data=response)
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
             err = {
                 "error": offer['error']
