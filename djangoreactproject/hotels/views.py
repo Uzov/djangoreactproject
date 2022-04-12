@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.generics import RetrieveUpdateAPIView
-
+from .models import HotelOffers, HotelBooking
 
 
 class CreateHotelsAPIView(APIView):
@@ -41,11 +41,17 @@ class CreateHotelsAPIView(APIView):
             response = offer['response']
             # Замена ключа в словаре
             response['m_offer_id'] = response.pop('id')
-            response['user_id'] = request.user.id
-            response['email'] = request.user.email
-            response['persons'] = {}
 
-            serializer = OffersSerializer(data=response)
+            booking_data = {
+                'offer': response,
+                'user_id': request.user.id,
+                'email': request.user.email,
+                'offer_id': HotelOffers.objects.get(pk=1),
+                'persons': {},
+                'is_cancelled': True
+            }
+
+            serializer = BookingSerializer(data=booking_data)
             if serializer.is_valid(raise_exception=True):
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
