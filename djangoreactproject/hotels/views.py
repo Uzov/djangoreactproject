@@ -76,9 +76,9 @@ class BookingViewset(viewsets.ModelViewSet):
         if request.method == 'GET':
             queryset = HotelBooking.objects.filter(user=request.user.id)
             serializer = BookingSerializer(queryset, many=True)
-            if serializer.is_valid(raise_exception=True):
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            # if serializer.is_valid(raise_exception=True):
+            return Response(serializer.data, status=status.HTTP_200_OK)
+            # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class BookingUpdateAPIView(APIView):
