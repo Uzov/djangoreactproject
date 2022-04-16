@@ -44,9 +44,8 @@ class CreateHotelsAPIView(APIView):
 
             booking_data = {
                 'offer': response,
-                'user_id': request.user.id,
+                'user': request.user.id,
                 'email': request.user.email,
-                'offer_id': HotelOffers.objects.get(pk=1),
                 'persons': {},
                 'is_cancelled': True
             }

@@ -29,12 +29,12 @@ class HotelOffers(models.Model):
 
 
 class HotelBooking(models.Model):
-    offer_id = models.OneToOneField(HotelOffers, on_delete=models.CASCADE, primary_key=True)
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    offer = models.OneToOneField(HotelOffers, on_delete=models.CASCADE, primary_key=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     email = models.EmailField(verbose_name='email', default='default@email', max_length=40, blank=False)
     persons = JSONField(verbose_name='Список доп. проживающих', blank=True, null=True)
     booking_id = models.CharField(verbose_name="Код бронирования", max_length=10, blank=True)
     is_cancelled = models.BooleanField(verbose_name='Отменено ли бронирование?', default=True, blank=False)
 
     def __str__(self):
-        return f'{self.user_id} ({self.offer_id} - {self.is_cancelled})'
+        return f'{self.user} ({self.offer} - {self.is_cancelled})'
