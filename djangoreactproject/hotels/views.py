@@ -1,13 +1,18 @@
 from .config import multitour_token, multitour_url
-from .serializers import *
+# from .serializers import *
 import json
 import requests
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.generics import RetrieveUpdateAPIView
-from .models import HotelOffers, HotelBooking
+from rest_framework import viewsets
+from .models import HotelBooking
+from .serializers import BookingSerializer
+import random
+
+
+# Create your views here.
 
 
 class CreateHotelsAPIView(APIView):
@@ -62,12 +67,36 @@ class CreateHotelsAPIView(APIView):
             return Response(err, status=status.HTTP_404_NOT_FOUND)
 
 
-class HotelsRetrieveUpdateAPIView(RetrieveUpdateAPIView):
-    # Allow only authenticated users to access this url
-    permission_classes = (AllowAny,)
-    # permission_classes = (IsAuthenticated,)
-    serializer_class = OffersSerializer
+class BookingViewset(viewsets.ModelViewSet):
+    # Allow any user (authenticated or not) to access this url
+    # permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)
 
-    def get(self, request, *args, **kwargs):
-        serializer = self.serializer_class(request.user.email)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    def list(self, request):
+        if request.method == 'GET':
+            queryset = HotelBooking.objects.filter(user=request.user.id)
+            serializer = BookingSerializer(queryset, many=True)
+            if serializer.is_valid(raise_exception=True):
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class BookingUpdateAPIView(APIView):
+    # Allow any user (authenticated or not) to access this url
+    # permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)
+
+    def put(self, request):
+        if request.method == 'PUT':
+            data = request.data.get('booking', {})
+            offer_data = data.pop('offer')
+            booking = HotelBooking.objects.filter(offer__m_offer_id=offer_data)
+            booking.update(is_cancelled=data['is_cancelled'])
+
+            # Эмуляция бронирования
+            if not data["is_cancelled"]:
+                booking.update(booking_id=str(random.randint(100000, 999999)))
+            if data['is_cancelled']:
+                booking.update(booking_id='')
+
+        return Response(status=status.HTTP_200_OK)
