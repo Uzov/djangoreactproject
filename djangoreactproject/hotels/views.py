@@ -100,3 +100,12 @@ class BookingUpdateAPIView(APIView):
                 booking.update(booking_id='')
 
         return Response(status=status.HTTP_200_OK)
+
+    def delete(self, request):
+        if request.method == 'DELETE':
+            data = request.data.get('booking', {})
+            offer_data = data.pop('offer')
+            booking = HotelBooking.objects.filter(offer__m_offer_id=offer_data)
+            booking.delete()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
