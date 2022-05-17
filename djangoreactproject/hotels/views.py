@@ -91,21 +91,24 @@ class BookingUpdateAPIView(APIView):
             data = request.data.get('booking', {})
             offer_data = data.pop('offer')
             booking = HotelBooking.objects.filter(offer__m_offer_id=offer_data)
-            booking.update(is_cancelled=data['is_cancelled'])
-
-            # Эмуляция бронирования
-            if not data["is_cancelled"]:
-                booking.update(booking_id=str(random.randint(100000, 999999)))
-            if data['is_cancelled']:
-                booking.update(booking_id='')
-
-        return Response(status=status.HTTP_200_OK)
+            if len(booking.values('offer_id')) > 0:
+                booking.update(is_cancelled=data['is_cancelled'])
+                # Эмуляция бронирования
+                if not data["is_cancelled"]:
+                    booking.update(booking_id=str(random.randint(100000, 999999)))
+                if data['is_cancelled']:
+                    booking.update(booking_id='')
+                return Response(status=status.HTTP_200_OK)
+            else:
+                return Response(status=status.HTTP_404_NOT_FOUND)
 
     def delete(self, request):
         if request.method == 'DELETE':
             data = request.data.get('booking', {})
             offer_data = data.pop('offer')
             booking = HotelBooking.objects.filter(offer__m_offer_id=offer_data)
-            booking.delete()
-
-        return Response(status=status.HTTP_204_NO_CONTENT)
+            if len(booking.values('offer_id')) > 0:
+                booking.delete()
+                return Response(status=status.HTTP_204_NO_CONTENT)
+            else:
+                return Response(status=status.HTTP_404_NOT_FOUND)
