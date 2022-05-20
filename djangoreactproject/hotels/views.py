@@ -96,10 +96,12 @@ class BookingUpdateAPIView(APIView):
                 booking.update(is_cancelled=data['is_cancelled'], persons=data['persons'])
                 # Эмуляция бронирования
                 if not data["is_cancelled"]:
-                    booking.update(booking_id=str(random.randint(100000, 999999)))
+                    rand = str(random.randint(100000, 999999))
+                    booking.update(booking_id=rand)
+                    return Response({"booking_id": rand}, status=status.HTTP_200_OK)
                 if data['is_cancelled']:
                     booking.update(booking_id='')
-                return Response(status=status.HTTP_200_OK)
+                    return Response(status=status.HTTP_200_OK)
             else:
                 return Response(status=status.HTTP_404_NOT_FOUND)
 
