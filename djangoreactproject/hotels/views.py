@@ -90,7 +90,7 @@ class BookingUpdateAPIView(APIView):
         if request.method == 'PUT':
             data = request.data.get('booking', {})
             offer_data = data.pop('offer')
-            # queryset booking
+            # формируем queryset booking
             booking = HotelBooking.objects.filter(offer__m_offer_id=offer_data)
             if len(booking.values('offer_id')) > 0:
                 booking.update(is_cancelled=data['is_cancelled'], persons=data['persons'])
@@ -107,7 +107,7 @@ class BookingUpdateAPIView(APIView):
         if request.method == 'DELETE':
             data = request.data.get('booking', {})
             offer_data = data.pop('offer')
-            # queryset booking
+            # формируем queryset booking
             booking = HotelBooking.objects.filter(offer__m_offer_id=offer_data)
             if len(booking.values('offer_id')) > 0:
                 booking.delete()
